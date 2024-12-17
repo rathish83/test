@@ -1,0 +1,31 @@
+/* Enter your custom styles here */
+.zUpldBtn{
+    margin-left: 3rem !important;
+}
+
+.sapMPDFViewerContent.sapMPDFViewerReducedContent{
+    height:600px !important;
+}
+
+/* Define color ranges based on confidence levels */
+.confidence-high {
+    color: #28a745;  /* Green for high confidence (close to 1) */
+  }
+  
+  .confidence-medium {
+    color: #ffc107;  /* Yellow for medium confidence (around 0.5) */
+  }
+  
+  .confidence-low {
+    color: #dc3545;  /* Red for low confidence (close to 0) */
+  }
+  
+  .highlight {
+    background-color: yellow;
+  }
+  .zHeader{
+    font-size:1rem !important;
+    font-weight: bold !important;
+    padding-right:4rem !important;
+    
+  }

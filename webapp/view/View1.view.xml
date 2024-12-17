@@ -1,0 +1,197 @@
+<mvc:View controllerName="zuipdf.controller.View1"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true" xmlns:core="sap.ui.core"
+    xmlns="sap.m" xmlns:u="sap.ui.unified" xmlns:layout="sap.ui.layout.form" xmlns:l="sap.ui.layout" >
+    <Page id="page" title="{i18n>title}">
+    <content>
+       <l:Splitter orientation="Horizontal" width="100%" height="100%">
+    
+			 <VBox  class="sapUiSmallMargin">
+       <Panel headerText="Inbox" expandable="true" expanded="true"> 
+          <Table id="pdfTable" inset="false" items="{/DocumentStore}">
+          <headerToolbar>
+            <Toolbar>
+              <Title text="PDF List" />
+            </Toolbar>
+          </headerToolbar>
+          <columns>
+            <Column>
+              <Text text="ID" />
+            </Column>
+            <Column>
+              <Text text="File Name" />
+            </Column>
+            <Column>
+              <Text text="JSON Body" />
+            </Column>          
+            <Column>
+              <Text text="Actions" />
+            </Column>
+          </columns>
+          <items>
+            <ColumnListItem>
+              <cells>
+                <Text text="{guid}" />
+                <Text text="{fileName}" />
+                <Text text="{jsonBody}" />
+                <Button text="View PDF" press=".onViewPDF" />
+              </cells>
+            </ColumnListItem>
+          </items>
+        </Table>  
+       </Panel>
+       <Panel headerText="Source to PDF" expandable="true" expanded="true">
+          <layout:SimpleForm
+            editable="false"
+            layout="ResponsiveGridLayout"
+            
+            columnsM="2"   
+            singleContainerFullSize="true"
+            > 
+            <layout:content>
+   <!-- Dropdown for Entity -->
+              
+                <Label text="Select Entity" />
+                <Select id="entitySelect" selectedKey="entityKey" items="{/entityOptions}">
+                  <core:Item key="{key}" text="{text}" />
+                </Select>
+
+                <!-- Dropdown for Model -->
+                <Label text="Select Model" />
+                <Select id="modelSelect" selectedKey="modelKey" items="{/modelOptions}">
+                  <core:Item key="{key}" text="{text}" />
+                </Select>
+
+                <!-- Filter Product -->
+                <CheckBox id="chkBoxProdFilter" text="Filter Product" selected="false" />
+
+                <Label text="Source PDF" />
+                <u:FileUploader id="fileUploader" />
+
+                   
+                </layout:content>
+                </layout:SimpleForm>
+                <Button text="Parse" press="onUpload"  class="sapUiLargeMarginBegin zUpldBtn"/>
+                </Panel>            
+                <!-- Header Information -->
+  
+  <HBox>
+
+  <Label text="Time(sec) taken to parse the PDF: " class="sapUiSmallMarginTopBottom"/>
+  <Text text = "{MeasureModel>/timeTaken}" class="sapUiSmallMarginTopBottom"/>
+  </HBox>
+    <HBox>
+  <Label text="Result Confidence Level : " class="sapUiSmallMarginBottom"/>
+  <Text text = "{= ${OrderModel>/Entity/confidence} * 10 }%" class="sapUiSmallMarginBottom"/>
+  </HBox>
+  <Bar>
+   <contentLeft>
+    <Button text="Previous" press=".onPreviousOrder" enabled="{viewModel>/previosBtn}" class="sapUiLargeMarginEnd"/>
+    </contentLeft>
+    <contentMiddle>
+    <Text id="headerInfo"  class="sapUiLargeMarginBeginEnd zHeader"/>
+    </contentMiddle>
+   <contentRight>
+    <Button text="Next" press=".onNextOrder" enabled="{viewModel>/nextBtn}" class="sapUiLargeMarginBegin"/>
+  </contentRight>
+  </Bar>
+  <Panel headerText="Header" expandable="true">
+      <!-- Header Section with Alignment using SimpleForm -->
+   <layout:SimpleForm
+    editable="false"
+    layout="ResponsiveGridLayout"
+    id="simpleForm"
+    columnsM="2"   
+    singleContainerFullSize="true"
+    > 
+    <layout:content>
+
+    <Label text="PO Number" id="po_number"  />
+    <Text id="txt_poNumber" text="{OrderModel>/Entity/po_number}" />
+
+    <Label text="PO Date" id="po_date"/>
+    <Text text="{OrderModel>/Entity/po_date}" />
+
+    <Label text="Buyer Name" id="bname"/>
+    <Text text="{OrderModel>/Entity/buyer_name}" />
+
+    <Label text="Buyer Address" />
+    <Text text="{OrderModel>/Entity/buyer_address}" />
+
+    <Label text="Vendor Name" />
+    <Text text="{OrderModel>/Entity/vendor/name}" />
+
+    <Label text="Vendor Address" />
+    <Text text="{OrderModel>/Entity/vendor/address}" />
+
+    <Label text="Contact Person" />
+    <Text text="{OrderModel>/Entity/vendor/contact_person}" />
+
+    <Label text="Phone Number" />
+    <Text text="{OrderModel>/Entity/vendor/phone_number}" />
+
+    <Label text="Email" />
+    <Text text="{OrderModel>/Entity/vendor/email}" />
+    <core:Title id="title2"/>
+    <Label text="Ship To" />
+    <Text text="{OrderModel>/Entity/ship_to/name}" />
+
+    <Label text="Ship To Address" />
+    <Text text="{OrderModel>/Entity/ship_to/address}" />
+
+    <Label text="Ship To Phone" />
+    <Text text="{OrderModel>/Entity/ship_to/phone_number}" />
+
+    <Label text="Ship To Email" />
+    <Text text="{OrderModel>/Entity/ship_to/email}" />
+    </layout:content>
+  </layout:SimpleForm>
+  </Panel>
+  <!-- Table for Items -->
+  <Panel headerText="Items" expandable="true">
+  <Table
+    items="{
+      path: 'OrderModel>/Entity/items/'
+    }">
+    
+    <columns>
+        <Column>
+        <Text text="Part Number" />
+      </Column>
+      <Column>
+        <Text text="Description" />
+      </Column>
+      <Column>
+        <Text text="Quantity" />
+      </Column>
+      <Column>
+        <Text text="Unit Price" />
+      </Column>
+      <Column>
+        <Text text="Total Price" />
+      </Column>
+    </columns>
+
+    <items>
+      <ColumnListItem>
+        <cells>         
+          <Text text="{= ${OrderModel>part_number} !== null ? ${OrderModel>part_number} : ${OrderModel>item_number} }" />
+          <Text text="{OrderModel>description}" />
+          <Text text="{OrderModel>quantity}" />
+          <Text text="{OrderModel>unit_price}" />
+          <Text text="{OrderModel>total_price}" />
+        </cells>
+      </ColumnListItem>
+    </items>
+  </Table>
+  </Panel>         
+  </VBox>
+        
+         <!-- Right Pane: PDF Viewer -->
+      <VBox id="pdfBox">
+      <PDFViewer id="pdfViewer"  source="{PDFModel>/Source}"   title="PDF Preview" isTrustedSource="true" />
+      </VBox>
+     </l:Splitter>
+        </content >
+    </Page>
+</mvc:View>

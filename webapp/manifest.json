@@ -17,15 +17,55 @@
     },
     "dataSources": {
       "mainService": {
-        "uri": "/sap/opu/odata/sap/ZSD_DOCUMENT_STORE/",
+        "uri": "sap/opu/odata/sap/ZSD_DOCUMENT_STORE_SRV/",
         "type": "OData",
+        
         "settings": {
+          "localUri": "localService/ZSD_DOCUMENT_STORE_SRV/metadata.xml",
           "annotations": [],
-          "localUri": "localService/metadata.xml",
           "odataVersion": "2.0"
         }
-      }
+        
+    },
+    "zbackend": {
+                "uri": "/sap/opu/odata/sap/ZSD_DOCUMENT_STORE_SRV/",
+                "type": "OData",
+                "settings": {
+                    "localUri": "localService/ZSD_DOCUMENT_STORE_SRV/metadata.xml",
+                    "defaultOperationMode": "Server",
+                    "defaultBindingMode": "TwoWay",
+                    "defaultCountMode": "Inline",
+                    "useBatch": true
+                }
+    },
+    "zSalesOrder":{
+      "uri": "/sap/opu/odata/sap/ZSD_SALES_ORDER_SRV/",
+                "type": "OData",
+                "settings": {
+                    "localUri": "localService/ZSD_SALES_ORDER_SRV/metadata.xml",
+                    "defaultOperationMode": "Server",
+                    "defaultBindingMode": "TwoWay",
+                    "defaultCountMode": "Inline",
+                    "useBatch": true
+                }
+  }
+
+  },
+  "crossNavigation": {
+    "inbounds": {
+        "zuipdf": {
+            "signature": {
+                "parameters": {},
+                "additionalParameters": "allowed"
+            },
+            "semanticObject": "PoInbox",
+            "action": "display",
+            "title": "{{flpTitle}}",
+            "subTitle": "{{flpSubtitle}}",
+            "icon": "sap-icon://inbox"
+        }
     }
+}
   },
   "sap.ui": {
     "technology": "UI5",
@@ -49,7 +89,9 @@
       "minUI5Version": "1.129.2",
       "libs": {
         "sap.m": {},
-        "sap.ui.core": {}
+        "sap.ui.core": {},
+        "sap.tnt": {},
+        "sap.viz": {}
       }
     },
     "contentDensities": {
@@ -62,6 +104,42 @@
         "settings": {
           "bundleName": "zuipdf.i18n.i18n"
         }
+      },
+      "": {
+        "type": "sap.ui.model.odata.v2.ODataModel",
+        "settings": {
+          "defaultOperationMode": "Server",
+          "defaultBindingMode": "TwoWay",
+          "defaultCountMode": "Inline",
+          "useBatch": true
+        },
+        "dataSource": "mainService",
+        "preload": true
+      },
+      "App": {
+        "type": "sap.ui.model.json.JSONModel"
+      },
+      "salesOrder": {
+        "type": "sap.ui.model.odata.v2.ODataModel",
+        "settings": {
+          "defaultOperationMode": "Server",
+          "defaultBindingMode": "TwoWay",
+          "defaultCountMode": "Inline",
+          "useBatch": true
+        },
+        "dataSource": "zSalesOrder",
+        "preload": true
+      },
+      "backend": {
+        "type": "sap.ui.model.odata.v2.ODataModel",
+        "settings": {
+          "defaultOperationMode": "Server",
+          "defaultBindingMode": "TwoWay",
+          "defaultCountMode": "Inline",
+          "useBatch": true
+        },
+        "dataSource": "zbackend",
+        "preload": true
       }
     },
     "resources": {
@@ -73,40 +151,146 @@
     },
     "routing": {
       "config": {
-        "routerClass": "sap.m.routing.Router",
+       "routerClass": "sap.f.routing.Router",
         "viewType": "XML",
         "async": true,
         "viewPath": "zuipdf.view",
-        "controlAggregation": "pages",
-        "controlId": "app",
-        "clearControlAggregation": false
+        "controlId": "DocApp"
       },
       "routes": [
         {
-          "name": "RouteView1",
-          "pattern": ":?query:",
+          "name": "Default",   
+          "pattern": ":?query:",      
+          "target": ["JobInbox"]      
+        },
+        {
+          "name": "JobInbox",   
+          "pattern": "JobInbox",      
+          "target": ["JobInbox"],
+          "layout": "OneColumn"      
+        },
+        {
+          "name": "JobDetails",
+          "pattern": "JobDetails/{Guid}",  
+          "layout": "TwoColumnsMidExpanded",
           "target": [
-            "TargetView1"
-          ]
-        }
-       
+                        "JobInbox",
+                        "JobDetails"
+                    ]
+        },
+        {
+          "name": "Test",   
+          "pattern": "Test",     
+          "target": ["Test"]      
+        },
+      
+        {
+          "name": "FileUpload",   
+          "pattern": "FileUpload",    
+          "target": ["FileUpload"],
+          "layout": "OneColumn"        
+        },
+        {
+          "name": "JobCreate",   
+          "pattern": "JobCreate",    
+          "target": ["JobCreate"],
+          "layout": "OneColumn"  
+        },
+        {
+          "name": "PoInbox",   
+          "pattern": "PoInbox",    
+          "target": ["PoInbox"] ,
+          "layout": "OneColumn"      
+        },
+        {
+          "name": "Prompt",   
+          "pattern": "Prompt/{Partner}/{Entity}",    
+          "target": ["Prompt"] ,
+          "layout": "OneColumn"      
+        },  
+        {
+          "name": "PoDetails",   
+          "pattern": "PoDetails/{Guid}/{fileName}",    
+          "target": ["PoDetails"] ,
+          "layout": "OneColumn"      
+        }    
       ],
       "targets": {
-        "TargetView1": {
+        "Test": {
           "viewType": "XML",
-          "transition": "slide",
-          "clearControlAggregation": false,
+          "viewId": "Inbox",
+					"viewName": "View2",
+          "controlAggregation": "beginColumnPages"
+				},
+        "JobInbox": {
+          "viewType": "XML",
+          "viewId": "JobInbox",
+          "viewLevel": 1,
+					"viewName": "JobInbox",
+          "controlAggregation": "beginColumnPages"
+				},
+        "JobDetails": {
+          "viewType": "XML",
+          "viewId": "JobDetails",
+					"viewName": "JobDetails",
+          "viewLevel": 2,
+           "controlAggregation": "midColumnPages"
+				},
+        "FileUpload": {
+          "viewType": "XML",
+          "transition": "slide",      
           "viewId": "View1",
-          "viewName": "View1"
+          "viewName": "View1",
+          "controlAggregation": "beginColumnPages"
+        },
+        "Prompt": {
+          "viewType": "XML",
+          "transition": "slide",      
+          "viewId": "Prompt",
+          "viewName": "Prompt",
+          "controlAggregation": "beginColumnPages"
+        },
+        "JobCreate": {
+          "viewType": "XML",
+          "transition": "slide",      
+          "viewId": "submitJob",
+          "controlId": "DocApp",
+          "viewName": "submitJob",
+          "controlAggregation": "beginColumnPages"
+        },
+        "PoInbox": {
+          "viewType": "XML",
+          "transition": "slide",      
+          "viewId": "PoHeader",
+          "viewName": "PoHeader",
+          "controlId": "DocApp",
+          "controlAggregation": "beginColumnPages"
+        },
+        "PoDetails": {
+          "viewType": "XML",
+          "transition": "slide",      
+          "viewId": "PoDetails",
+          "viewName": "PoDetails",
+          "controlId": "DocApp",
+          "controlAggregation": "beginColumnPages"
         }
-      
       }
     },
     "rootView": {
-      "viewName": "zuipdf.view.App",
+      "viewName": "zuipdf.view.DocApp",
       "type": "XML",
       "async": true,
-      "id": "App"
-    }
+      "id": "DocApp"
+      
+    },
+    "services": {
+      "ShellUIService": {
+          "factoryName": "sap.ushell.ui5service.ShellUIService"
+      }
   }
+  },
+  "sap.cloud": {
+        "public": true,
+        "service": "zuipdf"
+    }
 }

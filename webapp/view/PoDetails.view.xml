@@ -1,0 +1,240 @@
+<mvc:View
+    xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core"
+    xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:table = "sap.ui.table" xmlns:layout="sap.ui.layout.form"
+    controllerName="zuipdf.controller.PoDetails">
+
+    <Page title="Purchase Order" id="poDetails" showNavButton="true" class="sapUiContentPadding" navButtonPress="onBack">
+        <content>
+       <l:Splitter orientation="Horizontal" width="100%" height="100%">
+           <VBox>
+           
+            <!-- Approve & Reject Buttons -->
+            <HBox justifyContent="End">
+              <Button id="popOverBtn" icon="sap-icon://message-popup" press="handleMessagePopoverPress" class="sapUiTinyMarginEnd" 
+                type="{= ${messageModel>/hasErrors} ? 'Negative' : (${messageModel>/hasWarnings} ? 'Critical' : 'Default')}" />
+               <Button text="Training" type="Attention" press="onTrain" class="sapUiTinyMarginEnd"/>
+               <Button text="Approve" type="Accept" press="onApprove" class="sapUiTinyMarginEnd"/>               
+                <Button text="Simulate" type="Accept" press="onApprove" class="sapUiTinyMarginEnd"/>
+                <Button text="Save" type="Accept" press="onSave" />
+                <Button text="Reject" type="Reject" press="onReject" class="sapUiSmallMarginBegin"/>
+            </HBox>
+            <!-- Sold-to and Ship-to Information -->
+           <Panel headerText="Sold-to / Ship-to Information" expandable="true" expanded="true" class="zPDFTablePanel sapUiMediumMarginBegin">
+                <layout:SimpleForm
+                editable="false"
+                layout="ResponsiveGridLayout"
+                id="partnersimpleForm1"
+                columnsM="2"   
+                singleContainerFullSize="true"
+                > 
+                <layout:content>
+
+                <Label text="{HeaderModel>/BuyerName}" id="lblBuyer" class = "zLblFormPadding"/>
+                <Button text="Derive SoldTo" type="Transparent" press="onDerivePartner" id="btnDerive"/>
+
+                <Label text="Sold To" id="Soldto"  class="zLblFormPadding"/>
+                <Input id="SP" value="{HeaderPartnerModel>/SoldTo}" showValueHelp="true" valueHelpRequest="onValueHelpRequest" showSuggestion="true" 
+                liveChange="onInputLiveChange" />
+                
+                <Label text="Sold To Name" id="soldToName" class="zLblFormPadding"/>
+                <Input id="ipSoldToName" value="{HeaderPartnerModel>/SoldToName}"/>
+
+                <Label text="Address" id="soldToStreet" class="zLblFormPadding"/>
+                <Input id="ipSoldToAdddr" value="{HeaderPartnerModel>/SoldToAddress}" editable="false" />
+
+                <Label text="City" id="soldToCity" class="zLblFormPadding"/>
+                <Input id="ipSoldToCity" value="{HeaderPartnerModel>/SoldToCity}" editable="false" />
+
+                <Label text="State" id="soldToState" class="zLblFormPadding"/>
+                <Input id="ipSoldToState" value="{HeaderPartnerModel>/SoldToState}" editable="false" />
+
+
+                <Label text="Country" id="soldToCountry" class="zLblFormPadding"/>
+                <Input id="ipSoldToCntry" value="{HeaderPartnerModel>/SoldToCountry}" editable="false" />
+
+                <core:Title class="zNoPaddingMargin"/>
+                <Label text="Ship To" id="Shipto"  class="zLblFormPadding"/>
+                <Input id="WE" value="{HeaderPartnerModel>/ShipTo}" showValueHelp="true" valueHelpRequest="onValueHelpRequest"/>
+
+                <Label text="Ship To Name" id="shipToName" class="zLblFormPadding"/>
+                <Input id="ipShipToName" value="{HeaderPartnerModel>/ShipToName}"/>
+
+                <Label text="Street" id="shipToAddress" class="zLblFormPadding"/>
+                <Input id="ipShipToState" value="{HeaderPartnerModel>/ShipToAddress}" editable="false" />        
+
+                <Label text="City" id="shipToCity" class="zLblFormPadding"/>
+                <Input id="ipshipToCity" value="{HeaderPartnerModel>/ShipToCity}" editable="false" />
+
+                <Label text="State" id="shipToState" class="zLblFormPadding"/>
+                <Input id="ipshipToState" value="{HeaderPartnerModel>/ShipToState}" editable="false" />
+
+                <Label text="Country" id="shipToCountry" class="zLblFormPadding"/>
+                <Input id="ipshipToCntry" value="{HeaderPartnerModel>/ShipToCountry}" editable="false" />
+                </layout:content>
+                </layout:SimpleForm>
+            </Panel>
+
+            <!-- PO Header Details -->
+        <Panel id="headerPanel" headerText="PO Header Details" expandable="true" expanded="true" class="zPDFTablePanel sapUiMediumMarginBegin sapUiMediumMarginTop">
+            <layout:SimpleForm
+                editable="false"
+                layout="ResponsiveGridLayout"
+                id="simpleForm"
+                columnsM="2"   
+                singleContainerFullSize="true"
+                > 
+                <layout:content>
+
+                <Label text="PO Number" id="ponumber"  class="zLblFormPadding"/>
+                <Input value="{HeaderModel>/PoNumber}"/>
+
+                <Label text="PO Date" id="podate" class="zLblFormPadding"/>
+                <DatePicker id="poDateRange" value = "{HeaderModel>/PoDate}" width="100%"  class="sapUisizeCompact"  displayFormat="yyyy-MM-dd"
+                                        change="onChangePoDate" valueFormat="yyyy-MM-ddTHH:mm:ssZ" valueState="{headerState>/poDateValueState}" valueStateText="{headerState>/poDateValueStateText}"/>
+                <Label text="PO Type" id="po_type" class="zLblFormPadding"/>
+                <Input value="{HeaderModel>/PoType}"/>
+                <Label text="Total Price" id="po_price" class="zLblFormPadding"/>
+                <Input value="{HeaderModel>/TotalPrice}"/>
+                <core:Title class="zNoPaddingMargin"/>
+                <Label text="Order Type" class="zLblFormPadding"/>
+                <Select id="ot" selectedKey="{HeaderModel>/OrderType}"><items>
+                            <core:Item text="ZCO" key="ZCO"/>
+                            <core:Item text="ZOS" key="ZOS"/>
+                            <core:Item text="ZOR" key="ZOR"/>
+                        </items>
+                </Select>
+                <Label text="Sales Area" class="zLblFormPadding"/>
+                <Select id="sa" change="onSalesAreaChange" selectedKey="{HeaderModel>/SalesArea}">
+                    <items>
+                        <core:Item text="IL00/00/00" key="IL00"/>
+                        <core:Item text="2100/00/00" key="2100"/>
+                        <core:Item text="3300/00/00" key="3300"/>
+                    </items>
+                </Select>
+                <Label text="Priority" class="zLblFormPadding"/>
+                <Select selectedKey="HeaderModel>/Priority">
+                    <items>
+                        <core:Item text="Standard" key="STANDARD"/>
+                        <core:Item text="High" key="HIGH"/>
+                    </items>
+                </Select>
+                <Label text="Plant" class="zLblFormPadding"/>
+                <Input value="{HeaderModel>/Plant}"/>
+                <Label text="Order Reason" class="zLblFormPadding"/>
+                <Input value="{HeaderModel>/OrderReason}"/>
+    </layout:content>
+    </layout:SimpleForm>
+             
+            </Panel>
+
+            <!-- Partner Functions -->
+         <Panel headerText="" expandable="true" expanded="true" class="zPDFTablePanel sapUiMediumMarginBegin sapUiMediumMarginTop">
+         <headerToolbar>
+        <Toolbar>
+            <Title text="Partner Functions" />
+            <ToolbarSpacer/>  <!-- Pushes the button to the right -->
+                   <Button text="Add" press="onAddPartner" type="Emphasized"/>
+                   <Button text="Delete" press="onDeletePartner" type="Emphasized"/>
+        </Toolbar>
+    </headerToolbar>
+             <table:Table id="partnerTable"  rows="{
+        path: 'PartnerFunctionModel>/items'}"  visibleRowCount="8" selectionMode="MultiToggle" >
+
+          <table:columns>
+            <table:Column resizable="true"> 
+              <Label text="Partner Function" />
+              <table:template templateShareable="true">
+                  <Select id="pfDropDown"  items="{DropDownModel>/}" selectedKey="{PartnerFunctionModel>PartnerFunction}">
+                    <core:Item key="{DropDownModel>key}" text="{DropDownModel>text}"/>  </Select>
+              </table:template>
+            </table:Column>
+            <table:Column resizable="true">
+              <Label text="Partner Number" />
+              <table:template>
+                <Input value="{PartnerFunctionModel>PartnerNumber}" valueHelpRequest="onPartnerF4Help" showValueHelp="true" showSuggestion="true"/>
+              </table:template>
+            </table:Column>
+            <table:Column >
+              <Label text="Partner Name" />
+              <table:template>
+                <Input value="{PartnerFunctionModel>PartnerName}" editable="false"/>
+              </table:template>
+            </table:Column>    
+            <table:Column >
+              <Label text="Partner Address" />
+              <table:template>
+                <Input value="{PartnerFunctionModel>Address}" editable="false"/>
+              </table:template>
+            </table:Column>        
+             <table:Column>
+              <Label text="Country" />
+              <table:template>
+              <Input value="{PartnerFunctionModel>Country}" editable="false"/>
+              </table:template>
+            </table:Column>
+          </table:columns>
+          
+        </table:Table>  
+     
+            </Panel>
+
+            <!-- Item Section -->
+            <Panel id="itemSection" headerText="Item Section" expandable="true" expanded="true" class="zPDFTablePanel sapUiMediumMarginBegin sapUiMediumMarginTop">
+               <headerToolbar>
+        <Toolbar>
+            <Title text="Item Details" />
+            <ToolbarSpacer/>  <!-- Pushes the button to the right -->
+                   <Button text="Add" press="onAddItem" type="Emphasized"/>
+                   <Button text="Delete" press="onDeleteItem" type="Emphasized"/>
+        </Toolbar>
+    </headerToolbar>
+               <table:Table id="itemsTable"  rows="{
+        path: 'ItemModel>/'}"  visibleRowCount="8" selectionMode="MultiToggle" >
+        
+          <table:columns>
+            <table:Column resizable="true"> 
+              <Label text="Part Number" />
+              <table:template>
+                <Input value="{ItemModel>part_number}" showValueHelp="true"  change="onMaterialChange"
+                      valueHelpRequest="onValueHelpMaterial" valueState="{ItemModel>ValueState}"
+                       valueStateText="{ItemModel>ValueStateText}"/>
+              </table:template>
+            </table:Column>
+            <table:Column resizable="true">
+              <Label text="Description" />
+              <table:template>
+                <Input value="{ItemModel>description}" editable="false"/>
+              </table:template>
+            </table:Column>
+            <table:Column textAlign="Center">
+              <Label text="Quantity" />
+              <table:template>
+                <Input value="{ItemModel>quantity}" />
+              </table:template>
+            </table:Column>    
+            <table:Column textAlign="Center">
+              <Label text="Unit Price" />
+              <table:template>
+                <Input value="{ItemModel>unit_price}" />
+              </table:template>
+            </table:Column>        
+             <table:Column>
+              <Label text="Total Price" />
+              <table:template>
+              <Input value="{ItemModel>total_price}" />
+              </table:template>
+            </table:Column>
+          </table:columns>
+          
+        </table:Table>  
+            </Panel>
+
+            </VBox>
+                     <!-- Right Pane: PDF Viewer -->
+      <VBox id="pdfBox">
+      <PDFViewer id="pdfViewer" source="{PDFModel>/Source}"   title="PDF Preview" isTrustedSource="true" />
+      </VBox>
+     </l:Splitter>
+        </content>
+    </Page>
+</mvc:View>

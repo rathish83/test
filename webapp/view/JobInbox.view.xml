@@ -1,0 +1,232 @@
+<mvc:View  xmlns="sap.m" 
+    xmlns:html="http://www.w3.org/1999/xhtml" xmlns:f="sap.f" xmlns:smartVariantManagement="sap.ui.comp.smartvariants"
+	xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"  xmlns:mvc="sap.ui.core.mvc"  xmlns:viz="sap.viz.ui5.controls"
+	xmlns:layout="sap.ui.layout"
+	xmlns:table = "sap.ui.table"
+	xmlns:viz.feeds="sap.viz.ui5.controls.common.feeds"
+	xmlns:viz.data="sap.viz.ui5.data"
+	xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" 
+	xmlns:common="sap.suite.ui.commons"  xmlns:smartTable="sap.ui.comp.smarttable"  xmlns:core="sap.ui.core"
+    controllerName="zuipdf.controller.JobInbox"  
+    displayBlock="true" height="100%"> 
+    <Page id="JobInbox" title="Job Inbox" class="zPage">
+        <content> 
+    				
+						
+    <Panel headerText="Job Overview list" expandable="true" width="100%" expanded="true" class="zPDFTablePanel sapUiTinyMargin" justifyContent="Center" alignContent="Center" > 
+	 <headerToolbar>
+        <Toolbar>
+            <Title text="Job Overview list" />
+            <ToolbarSpacer/>  <!-- Pushes the button to the right -->
+            <Button text="Job Submit" class="sapUisizeCompact" press="onJobSubmit" type="Emphasized"/>
+	  <Button text="File Upload" class="sapUisizeCompact" press="onFileUpload" type="Emphasized"/>
+	  <Button text="File Inbox" class="sapUisizeCompact" press="onFileInbox" type="Emphasized"/>
+	  <Button text="PO Inbox" class="sapUisizeCompact" press="onPoInbox" type="Emphasized"/>
+	  <Button text="Prompt" class="sapUisizeCompact" press="onPrompt" type="Emphasized"/>
+	   <Button text="PID" class="sapUisizeCompact" press="onPid" type="Emphasized"/>
+        </Toolbar>
+    </headerToolbar>
+  <!-- Input Section -->
+    <HBox justifyContent="Center" alignItems="Center" width="100%" class="sapUisizeCompact " alignContent="Center" >
+      <VBox width="20%">
+        <Label text="Entity" class="sapUisizeCompact"/>
+        <Select id="entitySelect" width="100%" class="sapUisizeCompact" change="onInputChange" >
+          <items>
+		 	 <core:Item key="ALL" text="ALL" />
+            <core:Item key="INVOICE" text="INVOICE" />
+            <core:Item key="PURCHASE_ORDER" text="PURCHASE_ORDER" />
+          </items>
+        </Select>
+      </VBox>
+
+      <VBox width="30%">
+        <Label text="Date Range" class="sapUisizeCompact"/>
+         <DateRangeSelection id="dateRangePicker" width="100%"  class="sapUisizeCompact"  displayFormat="yyyy-MM-dd"
+    		valueFormat="yyyy-MM-ddTHH:mm:ssZ"    dateValue="{dateModel>/startDate}"
+                                secondDateValue="{dateModel>/endDate}" change="onInputChange"/>
+      </VBox>
+
+    <!--  <VBox width="50%" class="zbtnVbox" alignItems="flex-end">
+        <Button text="Job Submit" class="sapUisizeCompact" press="onJobSubmit"/>
+		<Button text="File Upload" class="sapUisizeCompact" press="onFileUpload"/>
+      </VBox>
+      <VBox width="50%" class="zbtnVbox" alignItems="flex-end">
+        <Button text="File Upload" class="sapUisizeCompact" press="onFileUpload"/>
+      </VBox> -->
+    </HBox>
+
+
+ <!--
+           
+						<layout:FixFlex id="chartFixFlex">
+							<layout:flexContent>
+								<viz:Popover id="idPopOver" />								
+								<viz:VizFrame 
+									id="idVizFrame" renderComplete="onRenderComplete"
+									uiConfig="{
+										applicationSet: 'fiori'
+									}"
+									height="55%"
+									width="25%"
+									vizType="stacked_column"
+									class="viz-frame-border"
+									selectData="onSelectData"
+									vizProperties="{ &quot;title&quot;: { &quot;text&quot;: &quot;RFC Queue Failure Analysis&quot;, &quot;visible&quot;: true }, dataLabel:{
+											visible: true,
+											showTotal: true
+										} , &quot;plotArea&quot;: { &quot;colorPalette&quot;: [ &quot;#FF0000&quot;, &quot;#00FF00&quot;, &quot;#0000FF&quot; ] } }"
+								>
+									<viz:dataset>
+										<viz.data:FlattenedDataset data="{/JobChartSet}">
+											<viz.data:dimensions>
+												<viz.data:DimensionDefinition
+													name="Job Status"
+													value="Job"
+												/>
+											</viz.data:dimensions>
+											<viz.data:measures>
+												<viz.data:MeasureDefinition
+													name="In Progress"
+													value="10"
+												/>
+												<viz.data:MeasureDefinition
+													name="Error"
+													value="20"
+												/>
+												<viz.data:MeasureDefinition
+													name="Success"
+													value="30"
+												/>
+											</viz.data:measures>
+										</viz.data:FlattenedDataset>
+									</viz:dataset>
+									<viz:feeds>
+										<viz.feeds:FeedItem
+											id="valueAxisFeed"
+											uid="valueAxis"
+											type="Measure"
+											values="In Progress,Error,Success"
+										/>
+										<viz.feeds:FeedItem
+											uid="categoryAxis"
+											type="Dimension"
+											values="Job Status"
+										/>
+									</viz:feeds>
+								</viz:VizFrame>
+							
+							</layout:flexContent>
+						</layout:FixFlex>
+	
+-->  <!-- 🔹 Vertical Layout to Stack Chart & Table -->
+
+                <!-- 🔹 Chart Section -->
+						<FlexBox direction="Column" justifyContent="Center" alignItems="Center" class="sapUiSizeCompact" >
+							<viz:VizFrame 
+									id="idVizFrame" renderComplete="onRenderComplete" selectionMode="Single"
+									uiConfig="{
+										applicationSet: 'fiori'
+									}"
+									vizType="stacked_column"
+									selectData="onSelectData"
+									class="viz-frame-border, sapUiSizeCompact"	
+									height = "280px"		
+								>
+                
+                <!-- Dataset for Chart -->
+                <viz:dataset>
+                    <viz.data:FlattenedDataset data="{chartModel>/}">
+                        <viz.data:dimensions>
+                            <viz.data:DimensionDefinition name="Job Status" value="{chartModel>JobType}" />
+                        </viz.data:dimensions>
+                        <viz.data:measures>
+                            <viz.data:MeasureDefinition name="Job Count" value="{chartModel>count}" />
+                        </viz.data:measures>
+  
+                    </viz.data:FlattenedDataset>
+                </viz:dataset>
+
+
+
+                <!-- Feeds -->
+                <viz:feeds>
+                    <viz.feeds:FeedItem uid="primaryValues" type="Measure" values="Job Count" />
+                    <viz.feeds:FeedItem uid="axisLabels" type="Dimension" values="Job Status" />
+					<viz.feeds:FeedItem uid="color" type="Dimension" values="Job Status" />
+                </viz:feeds>
+				 </viz:VizFrame>
+	
+	</FlexBox>
+	</Panel>
+	<FlexBox id="flextable" alignItems="Center" justifyContent="Center" >
+								
+          <table:Table id="jobTable"  rows="{
+     			 path: 'JobInboxModel>/'}"  visibleRowCount="10" selectionMode="None" class="sapUiLargeMarginTop jobTable sapUiTinyMargin" 	ariaLabelledBy="title">
+				 <table:extension>
+					<OverflowToolbar style="Clear">
+						<Title id="title" text="Job Details"/>
+						<ToolbarSpacer ></ToolbarSpacer>
+						<Button text="Refresh" press="onRefresh" type="Emphasized"/>
+									</OverflowToolbar>
+
+						
+				</table:extension>
+          <table:columns>
+
+            <table:Column>
+              <Label text="Job Name" />
+              <table:template>
+                <Text text="{JobInboxModel>JobName}" />
+              </table:template>
+            </table:Column>
+
+            <table:Column>
+              <Label text="Entity Name" />
+              <table:template>
+                <Text text="{JobInboxModel>EntityType}" />
+              </table:template>
+            </table:Column>
+
+            <table:Column textAlign="Center">
+              <Label text="Date Created" />
+              <table:template>
+                <Text text="{path:'JobInboxModel>CreatedDate',type: 'sap.ui.model.type.Date', formatOptions: {pattern: 'MMM d y', strictParsing: true , UTC: true}}"/> 
+              </table:template>
+            </table:Column>  
+    
+			<table:Column textAlign="Center">
+			<Label text="Total File Count" />
+			<table:template>
+				<Text text="{JobInboxModel>TotalFileCount}" />
+			</table:template>
+			</table:Column> 
+
+			<table:Column textAlign="Center">
+			<Label text="Total File Processed" />
+			<table:template>
+				<Text text="{JobInboxModel>TotalDocProcessed}" />
+			</table:template>
+			</table:Column> 	
+
+            <table:Column textAlign="Center">
+              <Label text="Status" />
+              <table:template>
+                <Text text="{JobInboxModel>Status}" />
+              </table:template>
+            </table:Column>     
+
+            <table:Column>
+              <Label text="Actions" />
+              <table:template>
+              <Button text="View Details" press=".onViewDetails" />
+              </table:template>
+            </table:Column>
+
+          </table:columns>
+          
+        </table:Table>  
+							</FlexBox>
+                                                               
+        </content>
+    </Page>
+</mvc:View>

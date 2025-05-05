@@ -1,46 +1,13 @@
 <mvc:View controllerName="zuipdf.controller.View1"
     xmlns:html="http://www.w3.org/1999/xhtml"
-    xmlns:mvc="sap.ui.core.mvc" displayBlock="true" xmlns:core="sap.ui.core"
+    xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core"
     xmlns="sap.m" xmlns:u="sap.ui.unified" xmlns:layout="sap.ui.layout.form" xmlns:l="sap.ui.layout" >
-    <Page id="page" title="{i18n>title}">
+    <Page id="page1" title="{i18n>title}">
     <content>
        <l:Splitter orientation="Horizontal" width="100%" height="100%">
     
 			 <VBox  class="sapUiSmallMargin">
-       <Panel headerText="Inbox" expandable="true" expanded="true"> 
-          <Table id="pdfTable" inset="false" items="{/DocumentStore}">
-          <headerToolbar>
-            <Toolbar>
-              <Title text="PDF List" />
-            </Toolbar>
-          </headerToolbar>
-          <columns>
-            <Column>
-              <Text text="ID" />
-            </Column>
-            <Column>
-              <Text text="File Name" />
-            </Column>
-            <Column>
-              <Text text="JSON Body" />
-            </Column>          
-            <Column>
-              <Text text="Actions" />
-            </Column>
-          </columns>
-          <items>
-            <ColumnListItem>
-              <cells>
-                <Text text="{guid}" />
-                <Text text="{fileName}" />
-                <Text text="{jsonBody}" />
-                <Button text="View PDF" press=".onViewPDF" />
-              </cells>
-            </ColumnListItem>
-          </items>
-        </Table>  
-       </Panel>
-       <Panel headerText="Source to PDF" expandable="true" expanded="true">
+       <Panel headerText="Source to PDF" expandable="true" expanded="true" class="sapUiSmallMarginTop">
           <layout:SimpleForm
             editable="false"
             layout="ResponsiveGridLayout"
@@ -63,7 +30,8 @@
                 </Select>
 
                 <!-- Filter Product -->
-                <CheckBox id="chkBoxProdFilter" text="Filter Product" selected="false" />
+                <CheckBox id="chkBoxProdFilter" text="Filter Product" selected="false" visible="false"/>
+                <CheckBox id="chkBoxMultiModel" text="Use Multi Model" selected="false" />
 
                 <Label text="Source PDF" />
                 <u:FileUploader id="fileUploader" />
@@ -72,6 +40,7 @@
                 </layout:content>
                 </layout:SimpleForm>
                 <Button text="Parse" press="onUpload"  class="sapUiLargeMarginBegin zUpldBtn"/>
+                <Button text="Training" class="sapUiMediumMarginBegin" press="onTrain" type="Emphasized"/>
                 </Panel>            
                 <!-- Header Information -->
   
@@ -149,11 +118,10 @@
   </Panel>
   <!-- Table for Items -->
   <Panel headerText="Items" expandable="true">
-  <Table
+  <Table id="itemTable"
     items="{
       path: 'OrderModel>/Entity/items/'
     }">
-    
     <columns>
         <Column>
         <Text text="Part Number" />
@@ -189,7 +157,7 @@
         
          <!-- Right Pane: PDF Viewer -->
       <VBox id="pdfBox">
-      <PDFViewer id="pdfViewer"  source="{PDFModel>/Source}"   title="PDF Preview" isTrustedSource="true" />
+      <PDFViewer id="pdfViewer" source="{PDFModel>/Source}"   title="PDF Preview" isTrustedSource="true" />
       </VBox>
      </l:Splitter>
         </content >

@@ -1,0 +1,63 @@
+<core:FragmentDefinition xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" xmlns:table="sap.ui.table"
+	xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:core="sap.ui.core"  xmlns:layout="sap.ui.layout.form"
+	xmlns:smartField="sap.ui.comp.smartfield" xmlns:common="sap.suite.ui.commons">
+	<Dialog id="MatnrF4Dialog" title="Material F4 Help" contentWidth="60%"  draggable="true" resizable="true">
+		<content>
+     <!-- Filter Fields -->
+  
+         <layout:SimpleForm
+                editable="false"
+                layout="ResponsiveGridLayout"
+                id="MaterialsimpleForm"
+                columnsM="2"   
+                singleContainerFullSize="true"
+                > 
+                <layout:content>
+                  <Label text="Material" class = "zLblFormPadding"/>
+                  <Input id="filterMaterial" placeholder="Enter Material" value="{MaterialDialogHeader>/Material}" />
+                  <Label text="Sales Org" class = "zLblFormPadding"/>
+                  <Input id="filterMatnrOrg" placeholder="Enter Sales Org" value="{MaterialDialogHeader>/Vkorg}" />
+                  <core:Title class="zNoPaddingMargin"/>
+                  <Label text="Description" class = "zLblFormPadding"/>
+                  <Input id="filterMatnrDescr" placeholder="Enter Description" value="{MaterialDialogHeader>/Description}" />
+                  <core:Title class="zNoPaddingMargin"/>
+                  <Button text="Search" press="onSearchMaterialF4" width="10rem"/>
+               </layout:content>
+              </layout:SimpleForm>
+
+
+     <table:Table id="materialTable"  rows="{
+        path: 'MaterialModel>/'}"  visibleRowCount="8" selectionMode="Single" Title="Material Details" selectionBehavior="RowSelector">
+        <table:extension>
+        <OverflowToolbar style="Clear">
+            	<SearchField
+							placeholder="Filter"
+							value="{ui>/globalFilter}"
+							search="filterGlobally"
+							width="30rem"/>
+        </OverflowToolbar>
+        </table:extension>
+          <table:columns>
+            <table:Column>
+              <Label text="Material" />
+              <table:template>
+                <Text text="{MaterialModel>Material}" />
+              </table:template>
+            </table:Column>
+            <table:Column>
+              <Label text="Description" />
+              <table:template>
+                <Text text="{MaterialModel>Description}" />
+              </table:template>
+            </table:Column>
+          </table:columns>
+          
+        </table:Table>  
+		</content>
+    <beginButton><Button text="Ok" press="onMaterialDialogConfirm" /></beginButton>
+		<endButton>
+      
+			<Button text="Cancel" id="btnMatnrCancel" press="onMaterialDialogClose"/>
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>

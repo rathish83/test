@@ -1,7 +1,50 @@
-<mvc:View controllerName="zuipdf.controller.App"
-    xmlns:html="http://www.w3.org/1999/xhtml"
-    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
-    xmlns="sap.m">
-    <App id="app">
-    </App>
+<mvc:View
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns:tnt="sap.tnt"
+  xmlns:m="sap.m"
+  controllerName="zuipdf.controller.App">
+
+  <tnt:ToolPage id="app">
+    <!-- Side Navigation -->
+    <tnt:sideContent>
+      <tnt:SideNavigation id="sideNavigation" expanded="false">
+          <tnt:NavigationList>
+
+            <tnt:NavigationListItem
+              text="Inbox"
+              icon="sap-icon://inbox"
+              key="Test"
+              select=".onNavigation" />
+
+            <tnt:NavigationListItem
+              text="File Upload"
+              icon="sap-icon://upload"
+              key="FileUpload"
+              select=".onNavigation" />
+
+              <tnt:NavigationListItem
+              text="Submit Job"
+              icon="sap-icon://create"
+              key="JobCreate"
+              select=".onNavigation" />
+
+              <tnt:NavigationListItem
+              text="Po Inbox"
+              icon="sap-icon://inbox"
+              key="PoInbox"
+              select=".onNavigation" />
+          </tnt:NavigationList>
+  
+         
+      
+
+      </tnt:SideNavigation>
+    </tnt:sideContent>
+
+    <!-- Main Content -->
+    <tnt:mainContents>
+      <m:App id="pdfApp">   
+      </m:App>
+    </tnt:mainContents>
+  </tnt:ToolPage>
 </mvc:View>

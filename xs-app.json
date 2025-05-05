@@ -21,12 +21,34 @@
       "authenticationType": "none",
       "csrfProtection": false
     },
+
     {
-      "source": "^/odata/(.*)$",
-      "destination": "fswsso",
-      "csrfProtection": true,
+      "source": "^/get_pid",
+      "target": "/get_pid",
+      "destination": "pid",
       "authenticationType": "xsuaa",
-      "target": "/sap/opu/odata/sap/$1"
+      "csrfProtection": false    
+    },
+    {
+      "source": "^/parse_file_sharepoint(.*)$",
+      "target": "/parse_file_sharepoint/$1",
+      "destination": "llm",
+      "authenticationType": "none",
+      "csrfProtection": false
+    },
+    {
+      "source": "^/parse_file_mailbox(.*)$",
+      "target": "/parse_file_mailbox/$1",
+      "destination": "llm",
+      "authenticationType": "none",
+      "csrfProtection": false
+    },
+    {
+      "source": "^/sap/(.*)$",
+      "target": "/sap/$1",
+      "destination": "NW_GATEWAY",
+      "authenticationType": "none",
+      "csrfProtection": false
     },
     {
       "source": "^(.*)$",

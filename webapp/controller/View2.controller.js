@@ -1,11 +1,12 @@
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
-    "sap/m/PDFViewer","sap/m/MessageToast"
+    "sap/m/PDFViewer","sap/m/MessageToast",
+    'sap/viz/ui5/format/ChartFormatter',
 ],
-function (Controller,PDFViewer,MessageToast,) {
+function (Controller,PDFViewer,MessageToast,ChartFormatter) {
     "use strict";
 
-    return Controller.extend("zuipdf.controller.View1", {
+    return Controller.extend("zuipdf.controller.View2", {
         onInit: function () {
           var oData = {
             entityOptions: [
@@ -13,14 +14,27 @@ function (Controller,PDFViewer,MessageToast,) {
               { key: "INVOICE", text: "INVOICE" }
             ],
             modelOptions: [
-              { key: "gpt-4o-2024-08-06", text: "NVCF - META-LLAMA 3.3" },
-              { key: "nemo.meta/llama-3.1-70b-instruct", text: "NVCF - NEMO - META-LLAMA 3.1" },  
-              { key: "gpt-4o-2024-08-06", text: "GPT4o" }, 
-              { key: "nemo.mistral-nemo-12b-instruct", text: "NVCF - NVIDIA & MISTRAL" },           
-              { key: "nemo.mistralai/mistral-7b-instruct-v0.3", text: "NVCF - MISTRAL-V0.3" }             
-              
+              { key: "gpt-4o-2024-08-06", text: "GPT-4o" },
+              { key: "nemo.mistral-nemo-12b-instruct", text: "NEMO - NVIDIA & MISTRAL" },
+              { key: "nemo.mistralai/mistral-7b-instruct-v0.3", text: "NEMO - MISTRAL-V0.3" },     
+              { key: "nemo.meta/llama-3.1-70b-instruct", text: "NGC - NEMO - META-LLAMA" },     
+              { key: "nemo.nvdev/nvidia/llama-3.1-nemotron-70b-instruct", text: "NEMO - NVIDIA & LLAMA" }
             ]
           };
+          var chartData = {
+            donuts: [
+              { Category: "Success", Value: 60 },
+              { Category: "Error", Value: 25 },
+              { Category: "In Progress", Value: 15 }
+            ]
+          };
+          // Create a JSONModel and set it to the view
+          var oModel = new sap.ui.model.json.JSONModel();
+          oModel.setData(chartData.donuts);
+          this.getView().setModel(oModel, "DonutModel");
+          
+           // Bind Donut Chart to data
+          //this._bindDonutCharts();
           this.getView().setModel(this.getOwnerComponent().getModel("backend"),"backend");
            
            
@@ -38,6 +52,7 @@ function (Controller,PDFViewer,MessageToast,) {
                   }
                 })
      
+
             // Create a JSONModel and set it to the view
             var oModel = new sap.ui.model.json.JSONModel(oData);
             this.getView().setModel(oModel);
@@ -62,73 +77,41 @@ function (Controller,PDFViewer,MessageToast,) {
     this.renderSimpleFormElements(purchaseOrderData,simpleForm,"");
            
       },
-  
-      onTrain: function(oEvent){
-        /* var oParams = {};
-        const oRouter = this.getOwnerComponent().getRouter();
-        var selectedPo = this.getView().getModel("HeaderModel").getData();
-        oParams["Partner"] = selectedPo.BuyerName;      
-        oParams["Entity"] = 'PURCHASE_ORDER';    
-        oRouter.navTo("Prompt",oParams); */
-        if(this.data){
-          var oView = this.getView();
-          var oModel = new sap.ui.model.json.JSONModel();
-          oModel.setData([]);
-          this.getView().setModel(oModel,"purchaseOrderModel");
-        if(this.data[0]?.Entity?.Issuer)
-        {
-         this.sematictNavigation("Prompt", "Display", {"Partner": this.data[0].Entity.Issuer.toUpperCase(), "Entity": this.getView().byId("entitySelect").getSelectedKey() });
-        }
-        else if(this.data[0]?.Entity?.issuer){
-          this.sematictNavigation("Prompt", "Display", {"Partner": this.data[0].Entity.issuer.toUpperCase(), "Entity": this.getView().byId("entitySelect").getSelectedKey() });
-        }
-        else{
-          this.sematictNavigation("Prompt", "Display", {"Partner": "X", "Entity": this.getView().byId("entitySelect").getSelectedKey() });
-        }
-      }
-      else{
-        this.sematictNavigation("Prompt", "Display", {"Partner": "X", "Entity": this.getView().byId("entitySelect").getSelectedKey() });
-      }
-      },
-      
-      sematictNavigation: function (pSemantic, pAction, navParams) {
-        // get a handle on the global XAppNav service
-        try {
-            var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation");
-            oCrossAppNavigator.isIntentSupported([pSemantic - pAction])
-                .done(function (aResponses) {
-  
-                })
-                .fail(function () {
-                    new sap.m.MessageToast("Provide corresponding intent to navigate");
-                });
-        } catch (error) {
-  
-        }
-        // generate the Hash to display a employee Id
-        var hash = (oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
-            target: { 
-                semanticObject: pSemantic,
-                action: pAction
+
+      _bindDonutCharts: function () {
+        // Find the donut chart control in the view
+        var oDonutChart = this.getView().byId("donutSuccess");
+        var oPopOver = this.getView().byId("idPopOver");
+        oPopOver.connect(oDonutChart.getVizUid());
+        oPopOver.setFormatString(ChartFormatter.DefaultPattern.STANDARDFLOAT);
+
+        oDonutChart.setVizProperties({
+          title: {
+            visible: false // Hide the title
+          },
+          dataLabel:{
+
+            visible:true,
+
+          },
+          legend: {
+            title: {
+              visible: false // Hide legend title
             },
-            params: navParams
-        })) || "";
-        //Generate a  URL for the second application
-        var url = window.location.href.split('#')[0] + hash;
-        //Navigate to second app
-        sap.m.URLHelper.redirect(url);
-    },
-      onMaterialChange: function(oEvent){
-        var oInput = oEvent.getSource();
-        var sValue = oInput.getValue();
-        var oBindingContext = oInput.getBindingContext();
-
-        this.onValidateMaterial(sValue,oInput);
-        // Material number validation (example: numeric and length check)
-      
-
+            plotArea: {
+              dataLabel: {
+                visible: true, // Show numbers
+                formatString: "0", // Format for integers (no decimal places)
+                style: {
+                  color: "#000000" // Customize color if needed
+                }
+              }
+            }
+          }
+        }); 
       
       },
+  
       onNotesClose: function(oEvent){
 
         this._oNotesDialog.close();
@@ -148,6 +131,17 @@ function (Controller,PDFViewer,MessageToast,) {
     notes.Entity = JSON.parse(row.jsonBody);
     
     this.renderSimpleFormElements(notes,this._oNotesDialog,true);
+    const oTextArea = new sap.m.TextArea( {
+      width: "100%",
+      placeholder: "Email Body.",
+      growing: true,
+      growingMaxLines: 10,
+      value: row.MailBody,
+      rows: 10 // Set the initial number of rows
+    });
+
+    // Add the TextArea to the dialog's content
+    this._oNotesDialog.addContent(oTextArea);
     var oNotesJSONModel = new sap.ui.model.json.JSONModel(notes);
     sap.ui.getCore().byId("notesDialog").setModel(oNotesJSONModel, "oNotesModel");
     sap.ui.getCore().byId("notesDialog").getModel("oNotesModel").setProperty("/DialogTitle",title);
@@ -209,7 +203,7 @@ function (Controller,PDFViewer,MessageToast,) {
       // Create FormData to send file and additional input data
       var formData = new FormData();
       formData.append("file", file);
-      var json_data = {"Entity": selectedEntity,"Model": selectedModel,"UICall": !this.getView().byId("chkBoxMultiModel").getSelected(), "filter_product": this.getView().byId("chkBoxProdFilter").getSelected()};
+      var json_data = {"Entity": selectedEntity,"Model": selectedModel,"UICall": true, "filter_product": this.getView().byId("chkBoxProdFilter").getSelected()};
       formData.append("input", JSON.stringify(json_data));
 
       var reader = new FileReader();
@@ -314,13 +308,6 @@ function (Controller,PDFViewer,MessageToast,) {
           var oModel = new sap.ui.model.json.JSONModel({"timeTaken": (timeTaken / 1000).toFixed(2)});
           that.getView().setModel(oModel,"MeasureModel");
           const simpleForm = that.getView().byId("simpleForm");
-          try{
-           response[0]["Entity"] = JSON.parse(response[0]["Entity"]);
-          }
-          catch (e){
-            response = JSON.parse(response)
-            response[0]["Entity"] = JSON.parse(response[0]["Entity"]);
-          }
           that.renderSimpleFormElements(response[0],simpleForm,false);
           that.getView().setBusy(false);
             try{
@@ -441,7 +428,6 @@ function (Controller,PDFViewer,MessageToast,) {
 
         // Access Entity data and loop through it
         const entityData = poData.Entity;
-    
         for (const key in entityData ) {
             
             if (entityData.hasOwnProperty(key) && !key.includes("confidence")) {
@@ -499,6 +485,53 @@ toPascalCase: function(str) {
   return str
       .replace(/(?:^\w|[A-Z]|\b\w|\s+\w)/g, match => match.toUpperCase())
       .replace(/\s+/g, '');
+},
+
+onSearch: function () {
+  // Get input values
+  const oView = this.getView();
+  const sEntity = oView.byId("entitySelect").getSelectedKey();
+  const sStatus= oView.byId("statusSelect").getSelectedKey();
+  var oFromDate = oView.byId("dateRangePicker").getDateValue();
+  var oToDate = oView.byId("dateRangePicker").getSecondDateValue();
+   // Convert to UTC
+  //const utcToDate = new Date(oToDate.getTime() - oToDate.getTimezoneOffset() * 60000);
+ /* if (!sEntity || !oDateRange) {
+    sap.m.MessageToast.show("Please fill all fields.");
+    return;
+  } */
+
+  // Extract Dates
+ 
+
+  // Filter OData call
+  const oModel = this.getView().getModel("InboxModel");
+  const oFilter = [
+    new sap.ui.model.Filter("Entity", sap.ui.model.FilterOperator.EQ, sEntity)
+    
+    
+  ];
+  if ( oFromDate !== undefined && oFromDate !== null ) {
+    oFromDate = oFromDate.toISOString().split("T")[0];
+    oToDate = oToDate.toISOString().split("T")[0];
+    oFilter.push( new sap.ui.model.Filter("FromDate", sap.ui.model.FilterOperator.GE, oFromDate));
+    oFilter.push( new sap.ui.model.Filter("ToDate", sap.ui.model.FilterOperator.LT, oToDate));
+  }
+  if(sStatus !== null){
+    oFilter.push(new sap.ui.model.Filter("Status", sap.ui.model.FilterOperator.EQ, sStatus));
+  }
+  this.getView().getModel("backend").read("/DocumentStoreSet", {
+    filters: oFilter,
+    success: (oData) => {
+      // Bind table with the result
+      const oTable = oView.byId("pdfTable");
+      const oJSONModel = new sap.ui.model.json.JSONModel(oData.results);
+      oTable.setModel(oJSONModel, "InboxModel");
+    },
+    error: (oError) => {
+      sap.m.MessageToast.show("Error loading data.");
+    }
+  });
 }
       });
 });

@@ -1,0 +1,86 @@
+<core:FragmentDefinition xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" xmlns:table="sap.ui.table"
+	xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:core="sap.ui.core"  xmlns:layout="sap.ui.layout.form"
+	xmlns:smartField="sap.ui.comp.smartfield" xmlns:common="sap.suite.ui.commons">
+	<Dialog id="SoldtoDialog" title="Mail Body Content" contentWidth="60%"  draggable="true" resizable="true">
+		<content>
+     <!-- Filter Fields -->
+  
+         <layout:SimpleForm
+                editable="false"
+                layout="ResponsiveGridLayout"
+                id="partnersimpleForm"
+                columnsM="2"   
+                singleContainerFullSize="true"
+                > 
+                <layout:content>
+                  <Label text="Name" class = "zLblFormPadding"/>
+                  <Input id="filterName" placeholder="Enter Name" value="{DialogHeader>/Name}" />
+                  <Label text="Street" class = "zLblFormPadding"/>
+                  <Input id="streetName" placeholder="Enter Street" value="{DialogHeader>/Street}" />
+                  <Label text="Sales Org" class = "zLblFormPadding"/>
+                  <Input id="filterOrg" placeholder="Enter Sales Org" value="{DialogHeader>/Vkorg}" />
+                  <core:Title class="zNoPaddingMargin"/>
+                  <Label text="State" class = "zLblFormPadding"/>
+                  <Input id="filterState" placeholder="Enter State" value="{DialogHeader>/State}" />
+                  <Label text="Country" class = "zLblFormPadding"/>
+                  <Input id="filterCountry" placeholder="Enter Country" value="{DialogHeader>/Country}" />
+                  <core:Title class="zNoPaddingMargin"/>
+                  <Button text="Search" press="onSearchF4" width="10rem"/>
+               </layout:content>
+              </layout:SimpleForm>
+
+
+     <table:Table id="soldToTable"  rows="{
+        path: 'SoldToModel>/'}"  visibleRowCount="8" selectionMode="Single" Title="SoldTo Details" selectionBehavior="RowSelector">
+        <table:extension>
+        <OverflowToolbar style="Clear">
+            	<SearchField
+							placeholder="Filter"
+							value="{ui>/globalFilter}"
+							search="filterGlobally"
+							width="30rem"/>
+        </OverflowToolbar>
+        </table:extension>
+          <table:columns>
+            <table:Column>
+              <Label text="Sold To Number" />
+              <table:template>
+                <Text text="{SoldToModel>PartnerNumber}" />
+              </table:template>
+            </table:Column>
+            <table:Column>
+              <Label text="Sold To Name" />
+              <table:template>
+                <Text text="{SoldToModel>PartnerName}" />
+              </table:template>
+            </table:Column>
+            <table:Column>
+              <Label text="Street" />
+              <table:template>
+                <Text text="{SoldToModel>Street}" />
+              </table:template>
+            </table:Column>    
+            <table:Column>
+              <Label text="State" />
+              <table:template>
+                <Text text="{SoldToModel>State}" />
+              </table:template>
+            </table:Column>        
+            <table:Column>
+              <Label text="Country" />
+              <table:template>
+              <Text text="{SoldToModel>Country}" />
+              </table:template>
+            </table:Column>
+            
+          </table:columns>
+          
+        </table:Table>  
+		</content>
+    <beginButton><Button text="Ok" press="onSoldToDialogConfirm" /></beginButton>
+		<endButton>
+      
+			<Button text="Cancel" id="btnMCCancel" press="onSoldToDialogClose"/>
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>

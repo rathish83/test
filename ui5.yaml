@@ -17,11 +17,9 @@ server:
           url: https://ui5.sap.com
         backend:          
           - path: /upload_pdf
-            url: https://zprice_automation_llm-mediating-platypus-ig.cfapps.us20.hana.ondemand.com    
-            destination: llm
+            url: https://zprice_automation_llm-mediating-platypus-ig.cfapps.us20.hana.ondemand.com               
           - path: /sap
             url: http://fsd:443
-            destination: fswsso
     - name: fiori-tools-appreload
       afterMiddleware: compression
       configuration:
@@ -32,4 +30,4 @@ server:
       afterMiddleware: fiori-tools-appreload
       configuration:
         component: zuipdf
-        ui5Theme: sap_horizon
+        ui5Theme: sap_fiori_3

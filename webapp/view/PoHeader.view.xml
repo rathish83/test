@@ -1,0 +1,160 @@
+<mvc:View  xmlns="sap.m" 
+    xmlns:html="http://www.w3.org/1999/xhtml" xmlns:f="sap.f" xmlns:smartVariantManagement="sap.ui.comp.smartvariants"
+	xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"  xmlns:mvc="sap.ui.core.mvc" 
+	xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" xmlns:t="sap.ui.table"
+	xmlns:common="sap.suite.ui.commons"  xmlns:smartTable="sap.ui.comp.smarttable"  xmlns:core="sap.ui.core"
+    controllerName="zuipdf.controller.PoHeader"  
+    displayBlock="true" height="100%"> 
+    <Page id="PoInbox" title="Po Inbox" class="zPage sapUiContentPadding" showNavButton="true">
+        <content> 
+	
+    				<!--	<f:DynamicPage id="SearchPageDynamic" headerExpanded="true">
+						<f:title>
+							<f:DynamicPageTitle id="dpt">
+								<f:heading>
+									<HBox id="dphb1">
+										<smartVariantManagement:SmartVariantManagement id="nv.docvariant" persistencyKey="PageVariantPKey" save="onSaveAsVariant"/>
+									</HBox>
+								</f:heading>
+							</f:DynamicPageTitle>
+						</f:title>      
+                        <f:header>
+							<f:DynamicPageHeader id="dpheader" class="zDynamicPageHeader">
+								<f:content>
+									<smartFilterBar:SmartFilterBar id="smartFilterBar" showGoOnFB="true" useToolbar="false" entitySet="PoHeaderSet"
+										considerSelectionVariants="true" search="onSFBSearch" class="zInputRoundEdge zsmartLabel" initialise="onSFBInit"
+										showRestoreButton="true" showRestoreOnFB="true" reset="onReset" smartVariant="nv.docvariant" 
+										beforeVariantFetch="onSaveBefore" afterVariantLoad="onAfterVariantLoad" pendingChange="onPending"
+										persistencyKey="nvidia.sd.smartFilterKey" filterChange="onSFBFilterChange">
+										<smartFilterBar:groupConfiguration>
+											<smartFilterBar:GroupConfiguration id="sfgc" index="1" key="PoHeaderSet" label="Input Parameters"/>
+										</smartFilterBar:groupConfiguration>
+										<smartFilterBar:controlConfiguration>
+											<smartFilterBar:ControlConfiguration id="sfbcc" key="CreatedDate"/>
+										</smartFilterBar:controlConfiguration>
+													
+										<smartFilterBar:layoutData>
+											<FlexItemData id="flexitemdata" shrinkFactor="0" baseSize="0%"/>
+										</smartFilterBar:layoutData>
+									</smartFilterBar:SmartFilterBar>
+								</f:content>
+							</f:DynamicPageHeader>
+						</f:header>     
+                        <f:content> -->
+						   <FlexBox alignItems="Center" >                
+                	<SegmentedButton id="idSegment" class="sapUiMediumMargin zgreen" selectedKey="4" width="500px" selectionChange="onDateButtonSel">
+                    <items>
+                        <SegmentedButtonItem text="All" key="5" />
+                        <SegmentedButtonItem text="Today" key="2" class="sapUiSmallMargin"/>
+                        <SegmentedButtonItem text="" key="1" visible="false" class="sapUiSmallMargin"/>
+                        <SegmentedButtonItem text="This Week" key="3" class="sapUiSmallMargin"/>
+                        <SegmentedButtonItem text="This Month" key="4" class="sapUiSmallMargin"/>                        
+                    </items>
+                </SegmentedButton>
+                <Label id="txtFrom" text="Creation Date From " width="150px"/>
+                <DatePicker id="from" displayFormat="short" change= "oDateRangeChg"  dateValue="{path:'', type:'sap.ui.model.type.Date', formatOptions:{pattern:'MM/dd/yyyy',UTC:true}}"/>
+                <Label text="" width="10px"/>
+                <Label id="txtTo" text=" To " width="40px"/>
+                <DatePicker id="to"  displayFormat="short"  change= "oDateRangeChg" dateValue="{path:'', type:'sap.ui.model.type.Date', formatOptions:{pattern:'MM/dd/yyyy',UTC:true}}"/>
+                <Label text="" width="10px"/>
+                           
+
+            </FlexBox>
+            <FlexBox alignItems="Center" > 
+                <SegmentedButton id="idSegmentSt" class="sapUiMediumMargin " selectedKey="All" width="500px" selectionChange="onSearchByRange">
+                    <items>
+                        <SegmentedButtonItem text="All" key="All" />
+                        <SegmentedButtonItem text="Initial" key="INITIAL" class="sapUiSmallMargin"/>
+                        <SegmentedButtonItem text="Draft" key="DRAFT" class="sapUiSmallMargin"/>
+                        <SegmentedButtonItem text="Rejected" key="REJ" class="sapUiSmallMargin .zred"/>
+                        <SegmentedButtonItem text="Success" key="SUC" class="sapUiSmallMargin"/>                        
+                    </items>
+                </SegmentedButton>
+                <Button type="Accept" text = "Search" icon="sap-icon://search" press="onSelSearch"/>   
+            </FlexBox>
+							<FlexBox id="flextable1" alignItems="Baseline" justifyContent="Start" >
+								<sap.ui.comp.smarttable:SmartTable xmlns:sap.ui.comp.smarttable="sap.ui.comp.smarttable" id="searchTable" customData:useSmartToggle="true"
+								customData:useSmartField="false"   useExportToExcel="true" beforeExport="onBeforeExportCore"  enableAutoBinding="false"
+								useVariantManagement="true" useTablePersonalisation="true" persistencyKey="PO_INBOX" tableType="Table" tableBindingPath="oJModel>/PoHeaderSet"  demandPopin="true" 
+								width="100%" direction="Column" entitySet="PoHeaderSet" header="Purchase Order" backgroundDesign="Solid" 
+								editToggled="onEditToggle" showFullScreenButton="true" editTogglable="false" beforeRebindTable="onProdTableInit" fieldChange="OnFieldChange"
+								requestAtLeastFields="Docguid,Vbeln,Status,FileName,PoNumber,PoDate,BuyerName,BuyerStreetName,BuyerCity,BuyerState,BuyerCountry,BillToName,ShipToName,CreatedDate,CreatedTime"
+								initialise="onProdTableInit" class="sapUiResponsiveContentPadding zSearchTable"
+								initiallyVisibleFields="Kunnr,BuyerName,BuyerStreetName,BuyerCity,BuyerState,BuyerCountry,BillToName,ShipToName,CreatedDate,CreatedTime"
+								>
+								<sap.ui.comp.smarttable:customData>
+										<core:CustomData key="dateFormatSettings" value='\{"UTC":true\}' />
+								</sap.ui.comp.smarttable:customData>
+        
+								 <sap.ui.comp.smarttable:customToolbar>
+                    <OverflowToolbar design="Transparent">
+                        <ToolbarSpacer/>
+                        <SearchField liveChange="onFuzzySearch" placeholder="Search" width="30%">
+                            <layoutData>
+                                <OverflowToolbarLayoutData
+                                    shrinkable="false"
+                                    minWidth = "150px"/>
+                            </layoutData>			        	
+                        </SearchField>
+                    </OverflowToolbar>
+     		    </sap.ui.comp.smarttable:customToolbar>
+                                <t:Table id="searchInnerTable"  selectionMode="None" visibleRowCountMode="Auto" minAutoRowCount="10" alternateRowColors="true"> 
+                                                <!-- Column for PoNumber -->
+									<t:Column width="10rem" customData:p13nData='\{"columnKey": "PoNumber", "columnIndex": "0"}'>
+									                       
+										<t:label>
+											<Text text="{/#PoHeader/PoNumber/@sap:label}" />
+										</t:label>
+										<t:template>
+											<Link text="{oJModel>PoNumber}" press="onPoNumber" accessibleRole="Button"/>
+										</t:template>
+									</t:Column>
+                                    <t:Column width="10rem" customData:p13nData='\{"columnKey": "Vbeln", "columnIndex": "1"}'>
+									                       
+										<t:label>
+											<Text text="{/#PoHeader/Vbeln/@sap:label}" />
+										</t:label>
+										<t:template>
+											<Link text="{oJModel>Vbeln}" press="onSoNumber" accessibleRole="Button"/>
+										</t:template>
+									</t:Column>
+									 <t:Column width="10rem" customData:p13nData='\{"columnKey": "Status", "columnIndex": "2"}'>
+									                       
+										<t:label>
+											<Text text="{/#PoHeader/Status/@sap:label}" />
+										</t:label>
+										<t:template>
+											<Text text="{oJModel>Status}" class="{path: 'oJModel>Status', formatter: '.onformatStatusClass'}" />
+										</t:template>
+									</t:Column>
+  				<t:Column width="10rem"   customData:p13nData='\{"columnKey": "CreatedDate", "columnIndex": "12"}' >
+                        <Label text="PO Creation Date"/>
+                        <t:template>
+                            <HBox>
+                                <Text 	text="{path:'oJModel>CreatedDate',type: 'sap.ui.model.type.Date',formatOptions: { pattern: 'MM/dd/yyyy', UTC: true }}" />				
+                            </HBox>
+                        </t:template>
+                    </t:Column>  
+					 				<t:Column width="10rem"   customData:p13nData='\{"columnKey": "CreatedTime", "columnIndex": "13"}' >
+                        <Label text="PO Creation Time"/>
+                        <t:template>
+                            <HBox>
+                                <Text 	text="{
+                    parts: [{ path: 'oJModel>CreatedTime' }],
+                    formatter: '.onformatMillisecondsToTime'
+                }" />				
+                            </HBox>
+                        </t:template>
+                    </t:Column>               
+                                </t:Table>
+
+								<smartTable:layoutData>
+											<FlexItemData id="FlexItem" growFactor="1" baseSize="100%"/>
+								</smartTable:layoutData>
+								</sap.ui.comp.smarttable:SmartTable>
+							</FlexBox>
+                <!--        </f:content>
+                    </f:DynamicPage>           -->                                    
+        </content>
+    </Page>
+</mvc:View>

@@ -1,0 +1,92 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:layout="sap.ui.layout.form"  xmlns:table = "sap.ui.table"
+xmlns:l="sap.ui.layout" xmlns:m="sap.m"  xmlns:core="sap.ui.core" controllerName="zuipdf.controller.submitJob">
+  <m:Page title="PDF Extraction">
+    <m:content>
+      <m:Button type="Back" press="onBack"></m:Button>
+      <m:VBox fitContainer="true" alignItems="Center" justifyContent="Center">
+      <layout:SimpleForm
+            editable="false"
+            layout="ResponsiveGridLayout"
+            
+            columnsM="2"   
+            singleContainerFullSize="true"
+            > 
+            <layout:content>
+        <!-- Entity Type Dropdown -->
+        <m:Label text="Entity Type" />
+        <m:Select id="entityType"  items="{CategoryModel>/}" selectedKey="{formData>/entityType}">
+            <core:Item key="{CategoryModel>Entity}" text="{CategoryModel>Entity}" />
+        </m:Select>
+
+        <!-- Action Dropdown -->
+        <m:Label text="Action" />
+        <m:Select id="action"  items="{DropDown>/readOptions}" change="onActionChange" selectedKey="{formData>/actionType}">
+           <core:Item key="{DropDown>key}" text="{DropDown>text}" />
+      
+        </m:Select>
+        <!-- Input Folder -->
+        <m:Label text="Input Folder" />
+        <m:Input id="inputFolder" value="{formData>/inputFolder}" placeholder="Enter Input Folder Path" width="100%" visible="false"/>
+
+        <!-- Output Folder -->
+        <m:Label text="Output Folder" />
+        <m:Input id="outputFolder" value="{formData>/outputFolder}" placeholder="Enter Output Folder Path" width="100%" visible="false"/>
+
+        <m:CheckBox id="chkBoxDwnld" text="Download to Excel" selected="true"></m:CheckBox>
+        
+
+                </layout:content>
+                </layout:SimpleForm>
+        <m:CheckBox id="chkBoxRebate" text="Rebate" selected="false"></m:CheckBox>
+        <!-- Submit Button -->
+        <m:Button text="Submit" press=".onSubmit" type="Emphasized" />
+       
+        <m:Panel headerText="Job Details" expandable="true" expanded="true" class="sapUiSmallMarginTop">
+        <m:Button text="Refresh Job" press=".onRefresh" type="Emphasized" />
+        <table:Table id="jobTable"  rows="{
+        path: 'JobModel>/'}"  visibleRowCount="8" selectionMode="None" >
+          <table:columns>
+            <table:Column>
+              <m:Label text="Job Name" />
+              <table:template>
+                <m:Text text="{JobModel>JobName}" />
+              </table:template>
+            </table:Column>
+            <table:Column>
+              <m:Label text="Entity Name" />
+              <table:template>
+                <m:Text text="{JobModel>EntityType}" />
+              </table:template>
+            </table:Column>
+            <table:Column textAlign="Center">
+              <m:Label text="Action" />
+              <table:template>
+                <m:Text text="{JobModel>ActionType}" />
+              </table:template>
+            </table:Column>    
+            <table:Column textAlign="Center">
+              <m:Label text="Status" />
+              <table:template>
+                <m:Text text="{JobModel>Status}" />
+              </table:template>
+            </table:Column>        
+            <table:Column>
+              <m:Label text="Created Date" />
+              <table:template>
+              <m:Text text="{JobModel>CreatedDate}" />
+              </table:template>
+            </table:Column>
+             <table:Column>
+              <m:Label text="Created Name" />
+              <table:template>
+              <m:Text text="{JobModel>UserName}" />
+              </table:template>
+            </table:Column>
+          </table:columns>
+          
+        </table:Table>  
+        </m:Panel>
+         </m:VBox>
+    </m:content>
+  </m:Page>
+</mvc:View>

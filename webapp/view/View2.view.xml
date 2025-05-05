@@ -1,0 +1,166 @@
+<mvc:View controllerName="zuipdf.controller.View2"
+    xmlns:html="http://www.w3.org/1999/xhtml" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core"
+    xmlns:table = "sap.ui.table" xmlns="sap.m" xmlns:u="sap.ui.unified" xmlns:layout="sap.ui.layout.form" xmlns:l="sap.ui.layout" xmlns:viz="sap.viz.ui5.controls"
+    xmlns:vizFeeds="sap.viz.ui5.controls.common.feeds" xmlns:vizData="sap.viz.ui5.data">
+    <Page id="page" title="Inbox">
+    <content>
+       <l:Splitter orientation="Horizontal" width="100%" >
+
+
+			 <VBox  class="sapUiSmallMargin">
+
+       <Panel headerText="Inbox PDF list" expandable="true" expanded="true" class="zPDFTablePanel"> 
+  <!-- Input Section -->
+    <HBox justifyContent="SpaceBetween" alignItems="Center" width="100%" class="sapUisizeCompact">
+      <VBox width="20%">
+        <Label text="Entity" class="sapUisizeCompact"/>
+        <Select id="entitySelect" width="100%" class="sapUisizeCompact">
+          <items>
+            <core:Item key="INVOICE" text="INVOICE" />
+            <core:Item key="PURCHASE_ORDER" text="PURCHASE_ORDER" />
+          </items>
+        </Select>
+      </VBox>
+
+      <VBox width="30%">
+        <Label text="Date Range" class="sapUisizeCompact"/>
+         <DateRangeSelection id="dateRangePicker" width="100%"  class="sapUisizeCompact"  displayFormat="yyyy-MM-dd"
+    valueFormat="yyyy-MM-ddTHH:mm:ssZ" />
+      </VBox>
+
+      <VBox width="20%">
+        <Label text="Status" class="sapUisizeCompact"/>
+         <Select id="statusSelect" width="100%" class="sapUisizeCompact">
+          <items>
+            <core:Item key="ERROR" text="Error" />
+            <core:Item key="SUCCESS" text="Success" />
+          </items>
+        </Select>
+      </VBox>
+      <VBox width="10%">
+        <Button text="Search" press="onSearch" class="sapUisizeCompact"/>
+      </VBox>
+    </HBox>
+
+
+
+
+          <table:Table id="pdfTable"  rows="{
+      path: 'InboxModel>/'}"  visibleRowCount="5" selectionMode="None" class="sapUiSmallMarginTop">
+          <table:columns>
+            <table:Column>
+              <Label text="File Name" />
+              <table:template>
+                <Text text="{InboxModel>fileName}" />
+              </table:template>
+            </table:Column>
+            <table:Column>
+              <Label text="Entity Name" />
+              <table:template>
+                <Text text="{InboxModel>Entity}" />
+              </table:template>
+            </table:Column>
+            <table:Column textAlign="Center">
+              <Label text="Mail Body" />
+              <table:template>
+                <Button id="btnNotes" icon="sap-icon://comment" press="onNotesClick" class="zNotes"/>
+              </table:template>
+            </table:Column>    
+                       <table:Column textAlign="Center">
+              <Label text="Status" />
+              <table:template>
+                <Text text="{InboxModel>Status}" />
+              </table:template>
+            </table:Column>        
+            <table:Column>
+              <Label text="Actions" />
+              <table:template>
+              <Button text="View PDF" press=".onViewPDF" />
+              </table:template>
+            </table:Column>
+          </table:columns>
+          
+        </table:Table>  
+       </Panel>
+     
+      <!-- Donut Charts Area -->
+      
+
+    <HBox>
+
+  <Label text="Result Confidence Level : " class="sapUiSmallMarginTopBottom"/>
+  <Text text = "{= ${OrderModel>/Entity/confidence} * 10 }%" class="sapUiSmallMarginTopBottom"/>
+  </HBox>
+  <Bar>
+   <contentLeft>
+    <Button text="Previous" press=".onPreviousOrder" enabled="{viewModel>/previosBtn}" class="sapUiLargeMarginEnd"/>
+    </contentLeft>
+    <contentMiddle>
+    <Text id="headerInfo"  class="sapUiLargeMarginBeginEnd zHeader"/>
+    </contentMiddle>
+   <contentRight>
+    <Button text="Next" press=".onNextOrder" enabled="{viewModel>/nextBtn}" class="sapUiLargeMarginBegin"/>
+  </contentRight>
+  </Bar>
+  <Panel headerText="Header" expandable="true">
+      <!-- Header Section with Alignment using SimpleForm -->
+   <layout:SimpleForm
+    editable="false"
+    layout="ResponsiveGridLayout"
+    id="simpleForm"
+    columnsM="2"   
+    singleContainerFullSize="true"
+    > 
+    <layout:content>
+
+    
+    </layout:content>
+  </layout:SimpleForm>
+  </Panel>
+  <!-- Table for Items -->
+  <Panel headerText="Items" expandable="true">
+  <Table id="itemTable"
+    items="{
+      path: 'OrderModel>/Entity/items/'
+    }">
+    <columns>
+        <Column>
+        <Text text="Part Number" />
+      </Column>
+      <Column>
+        <Text text="Description" />
+      </Column>
+      <Column>
+        <Text text="Quantity" />
+      </Column>
+      <Column>
+        <Text text="Unit Price" />
+      </Column>
+      <Column>
+        <Text text="Total Price" />
+      </Column>
+    </columns>
+
+    <items>
+      <ColumnListItem>
+        <cells>         
+          <Text text="{= ${OrderModel>part_number} !== null ? ${OrderModel>part_number} : ${OrderModel>item_number} }" />
+          <Text text="{OrderModel>description}" />
+          <Text text="{OrderModel>quantity}" />
+          <Text text="{OrderModel>unit_price}" />
+          <Text text="{OrderModel>total_price}" />
+        </cells>
+      </ColumnListItem>
+    </items>
+  </Table>
+  </Panel>         
+  </VBox>
+        
+         <!-- Right Pane: PDF Viewer -->
+      <VBox id="pdfBox">
+      <PDFViewer id="pdfViewer" source="{PDFModel>/Source}"   title="PDF Preview" isTrustedSource="true" />
+      </VBox>
+     </l:Splitter>
+        </content >
+    </Page>
+</mvc:View>

@@ -1,0 +1,66 @@
+<mvc:View controllerName="zuipdf.controller.Prompt"
+    xmlns:html="http://www.w3.org/1999/xhtml" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core"
+    xmlns:table = "sap.ui.table" xmlns="sap.m" xmlns:u="sap.ui.unified" xmlns:layout="sap.ui.layout.form" xmlns:l="sap.ui.layout" xmlns:viz="sap.viz.ui5.controls"
+    xmlns:vizFeeds="sap.viz.ui5.controls.common.feeds" xmlns:vizData="sap.viz.ui5.data">
+    <Page id="Prompt" title="Document Prompt">
+    <headerContent>
+            <Toolbar class="zBackground">
+               
+                <ToolbarSpacer/> 
+                <Button type="Emphasized" text="Update" press="onSave" icon="sap-icon://save"/>
+            </Toolbar>
+        </headerContent>
+    <content>
+       <l:Splitter orientation="Horizontal" >
+       
+		<VBox >
+      	<layoutData>
+					<l:SplitterLayoutData size="300px" />
+				</layoutData>
+       <Panel headerText="Partner List" expandable="true" expanded="true">
+       	<layoutData>
+					<l:SplitterLayoutData size="300px" />
+				</layoutData> 
+  <!-- Input Section -->
+    <HBox justifyContent="SpaceBetween" alignItems="Center">
+      <VBox>
+        <Label text="Entity" class="sapUisizeCompact"/>
+        <Select id="entitySelect" change="onSelectEntity">
+          <items>
+          <core:Item key="PURCHASE_ORDER" text="PURCHASE_ORDER" />
+            <core:Item key="INVOICE" text="INVOICE" />
+            
+            <core:Item key="QUOTATION_CUPA" text="QUOTATION_CUPA" />
+          </items>
+        </Select>
+      </VBox>
+    </HBox>
+        <SearchField id="searchIssuer" liveChange="onSearchIssuer" placeholder="Search Partner..." />
+        <List id="issuerList"
+	      	growing="true"
+		      growingThreshold="4"
+		      growingScrollToLoad="false" items="{ path: 'PartnerModel>/'}">
+        <layoutData>
+					<l:SplitterLayoutData size="300px" />
+				</layoutData>
+
+        <items>
+            <StandardListItem title="{PartnerModel>IssuerName}" type="Active" press="onIssuerSelect" />
+        </items>
+        </List>
+       </Panel>
+             
+  </VBox>
+
+    
+         <!-- Right Pane: Prompt Box -->
+      <VBox id="detailContainer" >
+        <layoutData>
+					<l:SplitterLayoutData size="auto" />
+				</layoutData>
+      </VBox>
+
+     </l:Splitter>
+        </content >
+    </Page>
+</mvc:View>

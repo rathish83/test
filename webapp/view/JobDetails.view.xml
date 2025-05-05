@@ -1,0 +1,170 @@
+<mvc:View  xmlns="sap.m" 
+    xmlns:html="http://www.w3.org/1999/xhtml" xmlns:f="sap.f" xmlns:smartVariantManagement="sap.ui.comp.smartvariants"
+	xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"  xmlns:mvc="sap.ui.core.mvc"  xmlns:viz="sap.viz.ui5.controls"
+	xmlns:layout="sap.ui.layout"
+	xmlns:table = "sap.ui.table"
+	xmlns:viz.feeds="sap.viz.ui5.controls.common.feeds"
+	xmlns:viz.data="sap.viz.ui5.data"
+	xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" 
+	xmlns:common="sap.suite.ui.commons"  xmlns:smartTable="sap.ui.comp.smarttable"  xmlns:core="sap.ui.core"
+    controllerName="zuipdf.controller.JobDetails"  
+    displayBlock="true" height="100%"> 
+    <Page id="JobDetails" title="Files" class="zPage" showHeader="false">
+        <content> 
+    				
+        <f:DynamicPage id="SearchPageDynamic" headerExpanded="true">
+        <f:title>
+          <f:DynamicPageTitle id="dpt">
+            <f:heading>
+              <HBox id="dphb1">
+                <Button  icon="sap-icon://decline" press="onHandleClose"  tooltip="Close middle column" visible="true"/>
+              </HBox>
+            </f:heading>
+          </f:DynamicPageTitle>
+        </f:title>      
+          <f:header>
+            <f:DynamicPageHeader id="dpheader" class="zDynamicPageHeader">
+              <f:content>
+                <HBox justifyContent="Center">
+                  <items>
+                  <VBox  class="sapUiLargeMarginEnd">
+                  <Label text="Job Name" class="sapUiSmallMarginBottom"/>
+                  <Label text="{JobInboxModel>/JobName}" />	
+                  </VBox>
+                  <VBox class="sapUiLargeMarginEnd">
+                  <Label text="Overall Status" class="sapUiSmallMarginBottom"/>
+                  <Label text="{JobInboxModel>/Status}" />
+                  </VBox>
+                  <VBox class="sapUiLargeMarginEnd" >
+                  <Label text="Created Date" class="sapUiTinyMarginBottom"/>
+                  <DatePicker id="subdate" width="9rem" class="sapUiNoMargin" value="{path: 'JobInboxModel>/CreatedDate', type: 'sap.ui.model.type.Date', formatOptions: {pattern: 'MMM d y', strictParsing: true , UTC: true}}"  editable="false" /> 				 
+                  </VBox>
+                  <VBox class="sapUiLargeMarginEnd">
+                  <Label text="Submitted By" class="sapUiSmallMarginBottom"/>
+                  <Label text="{JobInboxModel>/UserName}" />
+                  </VBox>
+
+                  <VBox class="sapUiLargeMarginBeginEnd">
+                  <Label text="In Progress" class="sapUiSmallMarginBottom"/>
+                  <Label text="{JobInboxModel>/InProgress}" class="zLargeFont confidence-medium alignCenter">
+                  <layoutData>
+                    <FlexItemData alignSelf="Center"/>
+                    </layoutData>
+                    </Label>
+                  </VBox>   
+
+                  <VBox class="sapUiLargeMarginBeginEnd">
+                  <Label text="Success" class="sapUiSmallMarginBottom"/>
+                  <Label text="{JobInboxModel>/Success}" class="zLargeFont confidence-high alignCenter" >
+                                    <layoutData>
+                    <FlexItemData alignSelf="Center"/>
+                    </layoutData>
+                    </Label>
+                  </VBox>        
+
+                  <VBox class="sapUiLargeMarginBeginEnd">
+                  <Label text="Error" class="sapUiSmallMarginBottom"/>
+                  <Label text="{JobInboxModel>/Error}" class="zLargeFont confidence-low alignCenter" >
+                                    <layoutData>
+                    <FlexItemData alignSelf="Center"/>
+                    </layoutData>
+                    </Label>
+                  </VBox>                                           
+                  </items>
+                  </HBox>
+                    
+              </f:content>
+            </f:DynamicPageHeader>
+          </f:header>     
+			 <f:content>
+      <FlexBox id="flextable" alignItems="Center" justifyContent="Center" >
+                      
+                <table:Table id="fileTable"  rows="{
+                path: 'FileInboxModel>/'}"  visibleRowCount="10" selectionMode="None" class="sapUiLargeMarginTop jobTable  sapUiTinyMargin" 	ariaLabelledBy="title">
+              <table:extension>
+                <OverflowToolbar style="Clear">
+                  <Title id="title" text="File Records"/>
+                   <ToolbarSpacer />
+                   <Button text="Refresh" press="onRefresh" type="Emphasized"/>
+                        </OverflowToolbar>
+               
+              </table:extension>
+                <table:columns>
+
+                  <table:Column>
+                    <Label text="File Name" />
+                    <table:template >
+                      <Text text="{FileInboxModel>FileName}" />
+                    </table:template>
+                  </table:Column>
+
+                  <table:Column hAlign="Center">
+                    <Label text="{JobInboxModel>/Step1Name}"/>
+                    <table:template alignContent="Center" textAlign="Center">
+                      <core:Icon src="{FileInboxModel>MailRead}" class="size1 alignCenter" color="{FileInboxModel>Step1Color}" textAlign="Center" >
+                        <core:layoutData>
+                          <FlexItemData growFactor="1" />
+                        </core:layoutData>
+                      </core:Icon>
+                    </table:template>
+                  </table:Column>
+
+                  <table:Column hAlign="Center">
+                    <Label text="{JobInboxModel>/Step2Name}" />
+                    <table:template alignContent="Center" textAlign="Center">
+                      <core:Icon src="{FileInboxModel>LLMParsed}" class="size1 alignCenter" color="{FileInboxModel>Step2Color}" textAlign="Center" >
+                        <core:layoutData>
+                          <FlexItemData growFactor="1" />
+                        </core:layoutData>
+                      </core:Icon>
+                    </table:template>
+                  </table:Column>  
+
+                  <table:Column hAlign="Center">
+                    <Label text="{JobInboxModel>/Step3Name}" />
+                    <table:template alignContent="Center" textAlign="Center">
+                      <core:Icon src="{FileInboxModel>PushSharePoint}" class="size1" color="{FileInboxModel>Step3Color}"  alignContent="Center">
+                        <core:layoutData>
+                          <FlexItemData growFactor="1" />
+                        </core:layoutData>
+                      </core:Icon>
+                    </table:template>
+                  </table:Column>      
+
+                  <table:Column hAlign="Center">
+                    <Label text="{JobInboxModel>/Step4Name}" />
+                    <table:template alignContent="Center" textAlign="Center">
+                      <core:Icon src="{FileInboxModel>Excel}" class="size1" color="{FileInboxModel>Step4Color}"  alignContent="Center">
+                        <core:layoutData>
+                          <FlexItemData growFactor="1" />
+                        </core:layoutData>
+                      </core:Icon>
+                    </table:template>
+                  </table:Column>   
+
+                  <table:Column alignContent="Center">
+                    <Label text="Overall Status" />
+                    <table:template>
+                      <Text text="{FileInboxModel>OverallStatus}" alignContent="Center"/>
+                    </table:template>
+                  </table:Column>     
+
+                  <table:Column>
+                    <Label text="Actions" />
+                    <table:template>
+                    <Button text="View Content" press=".onViewDetails" />
+                    </table:template>
+                  </table:Column>
+
+                </table:columns>
+                
+              </table:Table>  
+                    </FlexBox>
+              </f:content>
+          </f:DynamicPage> 
+        
+	
+                                                               
+        </content>
+    </Page>
+</mvc:View>
